@@ -12,5 +12,6 @@ def get_db_connection():
         )
         return conn
     except Exception as e:
-        print(f"Error Koneksi Database: {e}")
+        print(f"Error DB Connection: {e}")
+        st.error(f"❌ Error Detail Koneksi: {e}")  # Tampilkan penyebab gagal koneksi
         return None
