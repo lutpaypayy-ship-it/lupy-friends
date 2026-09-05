@@ -1,51 +1,36 @@
 from config.database import get_db_connection
 
-def setup_database():
+def init_db():
     conn = get_db_connection()
     if conn is None:
-        print("❌ Gagal terhubung ke database Aiven!")
+        print("❌ Gagal terhubung ke database Railway!")
         return
-    
+
     cursor = conn.cursor()
     
-    # Query Tabel Users
-    query_users = """
+    # Kueri membuat tabel users
+    create_table_query = """
     CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        username VARCHAR(50) NOT NULL UNIQUE,
+        username VARCHAR(50) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
-        nama VARCHAR(100) NOT NULL,
-        gender VARCHAR(20),
-        kota_asal VARCHAR(100),
-        hobi VARCHAR(100),
-        minuman_favorit VARCHAR(100),
-        genre_musik VARCHAR(100),
-        foto_profil VARCHAR(255) DEFAULT 'default.png'
+        location VARCHAR(100),
+        hobbies TEXT,
+        favorite_drink VARCHAR(100),
+        favorite_music VARCHAR(100),
+        profile_picture LONGBLOB
     );
     """
     
-    # Query Tabel Swipes
-    query_swipes = """
-    CREATE TABLE IF NOT EXISTS swipes (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        swiper_id INT NOT NULL,
-        swipee_id INT NOT NULL,
-        action ENUM('like', 'dislike') NOT NULL,
-        pesan TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (swiper_id) REFERENCES users(id),
-        FOREIGN KEY (swipee_id) REFERENCES users(id)
-    );
-    """
-    
-    print("Sedang membuat tabel di Aiven...")
-    cursor.execute(query_users)
-    cursor.execute(query_swipes)
-    conn.commit()
-    
-    print("✅ Berhasil! Tabel 'users' dan 'swipes' sudah dibuat di Aiven.")
-    cursor.close()
-    conn.close()
+    try:
+        cursor.execute(create_table_query)
+        conn.commit()
+        print("✅ Tabel users berhasil dibuat/diverifikasi di Railway!")
+    except Exception as e:
+        print(f"❌ Error saat membuat tabel: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 if __name__ == "__main__":
-    setup_database()
+    init_db()
