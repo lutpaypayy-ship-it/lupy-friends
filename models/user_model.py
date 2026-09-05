@@ -1,3 +1,4 @@
+import streamlit as st
 from config.database import get_db_connection
 
 class UserModel:
@@ -6,6 +7,7 @@ class UserModel:
         """Fungsi untuk Fitur 2: Menyimpan user baru ke MySQL"""
         conn = get_db_connection()
         if not conn:
+            st.error("❌ Gagal terhubung ke Database MySQL Railway.")
             return False
         
         cursor = conn.cursor()
@@ -19,6 +21,7 @@ class UserModel:
             return True
         except Exception as e:
             print(f"Gagal Register: {e}")
+            st.error(f"❌ Detail Error DB: {e}")  # Tampilkan error asli di layar
             return False
         finally:
             cursor.close()
@@ -69,6 +72,7 @@ class UserModel:
             return True
         except Exception as e:
             print(f"Gagal Update Profil: {e}")
+            st.error(f"❌ Error Update Profil: {e}")
             return False
         finally:
             cursor.close()
