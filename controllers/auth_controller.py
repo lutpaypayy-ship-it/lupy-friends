@@ -18,8 +18,10 @@ class AuthController:
         sukses = UserModel.register_user(username, password, nama, gender, hobi, minuman, musik, kota, foto)
         if sukses:
             st.success("Pendaftaran berhasil! Silakan ke menu Login.")
+            return True
         else:
-            st.error("Gagal mendaftar. Username mungkin sudah digunakan.")
+            # st.error sudah ditangani langsung oleh UserModel jika ada error spesifik
+            return False
 
     @staticmethod
     def logout():
