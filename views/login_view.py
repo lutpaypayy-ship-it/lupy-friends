@@ -4,22 +4,27 @@ from controllers.auth_controller import AuthController
 def render_login_view():
     st.title("🐾 Lupy Friends - Aplikasi Dating")
     
-    # Inisialisasi state untuk menu pilihan jika belum ada
+    # 1. Inisialisasi state halaman jika belum ada
     if "auth_menu" not in st.session_state:
         st.session_state["auth_menu"] = "Login"
         
-    # Memakai key="auth_menu" agar pilihan st.radio bisa diubah secara programmatic via session_state
+    # 2. Hitung index berdasarkan session state (0 = Login, 1 = Daftar Akun Baru)
+    default_index = 0 if st.session_state["auth_menu"] == "Login" else 1
+
+    # 3. Gunakan 'index' bukannya 'key' agar nilai state bisa diubah bebas dari manapun tanpa error
     pilihan = st.radio(
         "Pilih Menu:", 
         ["Login", "Daftar Akun Baru"], 
-        key="auth_menu", 
+        index=default_index, 
         horizontal=True
     )
     
+    # Update state jika pengguna mengklik radio button secara manual
+    st.session_state["auth_menu"] = pilihan
+
     if pilihan == "Login":
         st.subheader("Login ke Akun Kamu")
         
-        # Ambil username default dari session_state jika baru saja daftar
         default_user = st.session_state.get("registered_username", "")
         username = st.text_input("Username", value=default_user)
         password = st.text_input("Password", type="password")
@@ -60,11 +65,7 @@ def render_login_view():
             # Panggil fungsi register
             success = AuthController.register(username, password, nama, gender, hobi, minuman, musik, kota, nama_file_foto)
             
-            # Jika registrasi berhasil (pastikan AuthController.register mengembalikan True saat sukses)
             if success:
-                st.success("🎉 Registrasi berhasil! Mengalihkan ke halaman Login...")
-                # Simpan username untuk auto-fill di form login
                 st.session_state["registered_username"] = username
-                # Ubah radio button ke 'Login' dan reload aplikasi
-                st.session_state["auth_menu"] = "Login"
-                st.rerun()
+                st.session_state["auth_menu"] = "Login"  # Mengubah tampilan ke Login
+                st.rerun()  # Rerun aman dilakukan tanpa StreamlitWidgetAlreadyInstantiatedError

@@ -8,10 +8,12 @@ def get_db_connection():
             user=st.secrets["mysql"]["user"],
             password=st.secrets["mysql"]["password"],
             database=st.secrets["mysql"]["database"],
-            port=int(st.secrets["mysql"]["port"])
+            port=int(st.secrets["mysql"]["port"]),
+            connection_timeout=30,  # Beri waktu 30 detik agar Railway sempat bangun
+            autocommit=True
         )
         return conn
     except Exception as e:
         print(f"Error DB Connection: {e}")
-        st.error(f"❌ Error Detail Koneksi: {e}")  # Tampilkan penyebab gagal koneksi
+        st.error(f"❌ Error Detail Koneksi: {e}")
         return None
